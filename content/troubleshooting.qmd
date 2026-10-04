@@ -43,5 +43,6 @@ subtitle: "ตรวจตามลำดับ: Serial Monitor → Wi-Fi → IP
 | ใต้คำตอบแสดง `rule_fallback` ตลอด | Gemma ไม่ตอบ ช้า หรือตอบนอก allowlist | ดู log ของ llama.cpp; เพิ่ม `AIOT_TRANSLATE_SECONDS` |
 | ใต้คำตอบแสดง `gemma · llama.cpp` ทั้งที่เปิด Colab | URL/token ไม่ตรงรอบนี้ หรือ Colab หลุด | รัน `python -m gateway.remote "<ค่าจาก notebook>"` ใหม่ |
 | Colab: `401 unauthorized` | token ไม่ตรง | Run เซลล์ที่พิมพ์คำสั่งเชื่อมต่อใหม่แล้วคัดลอกใหม่ |
+| Colab รันเซลล์ 4 ซ้ำแล้วขึ้น `OSError: Address already in use` | server ตัวเก่ายังฟังพอร์ต 5000 อยู่ (notebook รุ่นเก่าไม่ปิดให้) | ใช้ notebook รุ่นล่าสุด ซึ่งปิด server ตัวเก่าก่อนสร้างใหม่; หรือรัน `server.shutdown(); server.server_close()` ในเซลล์ใหม่ก่อน แล้วรันเซลล์ 4 อีกครั้ง |
 | Colab เซลล์ 4: `health` ขึ้น ok แต่ `ReadTimeout` ตอนทดสอบ `/v1/chat` | Ollama ไม่ตอบ: โมเดลยังโหลดเข้า GPU ไม่เสร็จ หรือรันบน CPU เพราะไม่ได้เลือก T4 | เลือก Runtime → T4 GPU แล้วรันใหม่ตั้งแต่เซลล์ 1; ดูตาราง `ollama ps` ที่เซลล์ 2 ต้องเป็น `100% GPU`; notebook รุ่นล่าสุดจะอุ่นโมเดลก่อนทดสอบและแสดงสาเหตุให้ |
 | `UnicodeEncodeError` ในเทอร์มินัล Windows | คอนโซลไม่ใช่ UTF-8 | `$env:PYTHONIOENCODING='utf-8'` ก่อนรัน |
