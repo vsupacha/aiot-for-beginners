@@ -2,6 +2,7 @@
 
 python devices/simulator/simulate_board.py          # ทดสอบอัตโนมัติ 1 ชุด (ต้องเปิด gateway ก่อน)
 python devices/simulator/simulate_board.py --demo   # ส่งค่าแสงที่ขึ้น-ลงเรื่อย ๆ ให้ดูในหน้าแชต
+python devices/simulator/simulate_board.py --demo --device desk-01   # จำลองเป็นบอร์ดรหัส desk-01
 """
 
 import argparse
@@ -37,8 +38,8 @@ class Board:
         return call(self.base, "/v1/chat", {"device_id": self.device_id, "message": message})
 
 
-def selftest(base):
-    board = Board(base)
+def selftest(base, device_id=DEVICE_ID):
+    board = Board(base, device_id)
     failures = 0
 
     def check(name, got, want):
@@ -48,7 +49,7 @@ def selftest(base):
         print(f"{'OK  ' if ok else 'FAIL'} {name}: {got}" + ("" if ok else f" (ต้องการ {want})"))
 
     board.send(500)  # ให้ gateway รู้จักบอร์ดนี้ก่อน แล้วรีเซ็ตโหมดเผื่อค้างจากการทดลองก่อนหน้า
-    call(base, "/v1/control", {"device_id": DEVICE_ID, "mode": "auto"})
+    call(base, "/v1/control", {"device_id": device_id, "mode": "auto"})
     check("มืด -> เปิดไฟ", board.send(100)["action"], "LED_ON")
     check("สว่าง -> ปิดไฟ", board.send(800)["action"], "LED_OFF")
     reply = board.say("เปิดไฟ")
@@ -64,10 +65,10 @@ def selftest(base):
     return 1 if failures else 0
 
 
-def demo(base):
+def demo(base, device_id=DEVICE_ID):
     """ค่าแสงขึ้น-ลงเป็นคลื่น คาบ 60 วินาที เหมือนกลางวัน-กลางคืนแบบเร่ง"""
-    board = Board(base)
-    print("ส่งข้อมูลทุก 3 วินาที กด Ctrl+C เพื่อหยุด")
+    board = Board(base, device_id)
+    print(f"จำลองบอร์ด {device_id}: ส่งข้อมูลทุก 3 วินาที กด Ctrl+C เพื่อหยุด")
     started = time.monotonic()
     try:
         while True:
@@ -85,10 +86,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--device", default=DEVICE_ID, help="รหัสบอร์ดที่จะจำลอง (ค่าเริ่มต้น sim-01)")
     parser.add_argument("--demo", action="store_true", help="ส่งค่าแสงต่อเนื่องแทนการทดสอบ")
     args = parser.parse_args()
     url = f"http://{args.host}:{args.port}"
     try:
-        sys.exit(demo(url) if args.demo else selftest(url))
+        sys.exit(demo(url, args.device) if args.demo else selftest(url, args.device))
     except OSError as exc:
         sys.exit(f"ติดต่อ gateway ที่ {url} ไม่ได้: {exc}\nเปิดด้วย: python -m gateway.server")
