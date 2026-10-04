@@ -67,6 +67,8 @@ format:
     code-line-numbers: false
     number-sections: false
     smooth-scroll: true
+    mermaid:
+      theme: default   # ตรึงธีมสว่าง ไม่ให้ mermaid สลับเป็นธีมมืดตามโหมดของระบบปฏิบัติการ
     mainfont: "Noto Sans Thai"
     monofont: "JetBrains Mono"
     include-in-header:
