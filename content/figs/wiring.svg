@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400" font-family="Noto Sans Thai, sans-serif" font-size="14">
+  <rect width="760" height="400" fill="#fff"/>
+  <rect x="30" y="30" width="170" height="300" rx="10" fill="#e8eef7" stroke="#2c3e50" stroke-width="2"/>
+  <text x="115" y="58" text-anchor="middle" font-weight="bold">UNO R4 WiFi</text>
+  <g fill="#2c3e50">
+    <circle cx="200" cy="100" r="5"/><text x="188" y="104" text-anchor="end">5V</text>
+    <circle cx="200" cy="160" r="5"/><text x="188" y="164" text-anchor="end">A0</text>
+    <circle cx="200" cy="220" r="5"/><text x="188" y="224" text-anchor="end">GND</text>
+    <circle cx="200" cy="280" r="5"/><text x="188" y="284" text-anchor="end">D5 (ขั้น 4)</text>
+  </g>
+  <!-- LDR divider -->
+  <text x="330" y="70" font-weight="bold">เซนเซอร์แสง (LDR + 10 kΩ)</text>
+  <path d="M200 100 H330 V120" fill="none" stroke="#c0392b" stroke-width="2.5"/>
+  <rect x="318" y="120" width="24" height="50" fill="#fff" stroke="#2c3e50" stroke-width="2"/>
+  <text x="352" y="150">LDR</text>
+  <path d="M330 170 V160 H200" fill="none" stroke="#27ae60" stroke-width="2.5"/>
+  <circle cx="330" cy="170" r="4" fill="#27ae60"/>
+  <path d="M330 170 V190" fill="none" stroke="#27ae60" stroke-width="2.5"/>
+  <rect x="318" y="190" width="24" height="50" fill="#fff" stroke="#2c3e50" stroke-width="2"/>
+  <text x="352" y="220">10 kΩ</text>
+  <path d="M330 240 V260 H300 V220 H200" fill="none" stroke="#2c3e50" stroke-width="2.5"/>
+  <text x="240" y="380" font-size="13" fill="#555">เซนเซอร์แสง: ยิ่งสว่าง LDR ยิ่งต้านทานน้อย → แรงดันที่ A0 ยิ่งสูง</text>
+  <!-- LED -->
+  <text x="560" y="240" font-weight="bold">LED ภายนอก (ขั้นที่ 4)</text>
+  <path d="M200 280 H520" fill="none" stroke="#e67e22" stroke-width="2.5"/>
+  <rect x="520" y="268" width="50" height="24" fill="#fff" stroke="#2c3e50" stroke-width="2"/>
+  <text x="545" y="285" text-anchor="middle" font-size="12">220 Ω</text>
+  <path d="M570 280 H600" fill="none" stroke="#e67e22" stroke-width="2.5"/>
+  <polygon points="600,262 600,298 632,280" fill="#f9e79f" stroke="#2c3e50" stroke-width="2"/>
+  <line x1="632" y1="262" x2="632" y2="298" stroke="#2c3e50" stroke-width="2"/>
+  <path d="M632 280 H680 V345 H240 V220" fill="none" stroke="#2c3e50" stroke-width="2.5"/>
+  <text x="600" y="322" font-size="12" fill="#555" text-anchor="middle">ขายาว (anode) ต่อฝั่ง D5</text>
+</svg>

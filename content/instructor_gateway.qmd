@@ -1,0 +1,128 @@
+---
+title: "Gateway"
+subtitle: "ตัวกลางที่รับค่าจากบอร์ด ตัดสินใจ และเก็บสถานะ"
+---
+
+::: {.instructor-banner}
+**ส่วนของผู้สอน** นักเรียนไม่ต้องทำหน้านี้
+:::
+
+**gateway** คือโปรแกรม Python (`gateway/`) ที่รันบนคอมพิวเตอร์ มีหน้าที่
+
+1. รับค่าแสงจากบอร์ดทุก 3 วินาที
+2. ตัดสินใจว่าควรเปิดหรือปิดไฟ ตาม**โหมด**ที่ผู้ใช้เลือกและ**ความสว่าง**
+3. จำสถานะล่าสุดและประวัติค่าแสงของแต่ละบอร์ด ให้หน้าแชตมาอ่าน
+4. รับคำสั่งจากหน้าแชต (ผ่านปุ่มหรือข้อความ) แล้วเปลี่ยนโหมด
+
+ใช้เฉพาะ standard library ของ Python จึงไม่ต้อง `pip install` อะไร
+
+## เปิด gateway
+
+```powershell
+python -m gateway.server --lan
+```
+
+`--lan` ให้บอร์ดและเครื่องอื่นเชื่อมต่อได้ และเปิดการค้นหา gateway อัตโนมัติ (UDP) ถ้าไม่ใส่จะรับเฉพาะเครื่องนี้ (`127.0.0.1`) ใช้ทดสอบกับตัวจำลองบอร์ด ขั้นตอนเต็ม (ติดตั้ง, firewall, หน้าแชต) อยู่ที่[เตรียมระบบ](instructor_setup.qmd)
+
+## กฎของโคมไฟ
+
+กฎอยู่ใน `gateway/lamp.py` (ฟังก์ชัน `LampPolicy.decide`) อ่านได้ภายในไม่กี่บรรทัด
+
+| โหมด | พฤติกรรม |
+| --- | --- |
+| `on` | เปิดไฟตลอด ไม่สนความสว่าง |
+| `off` | ปิดไฟตลอด ไม่สนความสว่าง |
+| `auto` (ค่าเริ่มต้น) | ความสว่าง `< on_below` → เปิด; `>= off_above` → ปิด; ช่วงระหว่างนั้นคงสถานะเดิม |
+
+ค่าเริ่มต้นคือ `on_below = off_above = 35` ซึ่งหมายถึง**เกณฑ์เดียว** (ไม่มีช่วงกลาง) เมื่อแสงแกว่งอยู่ใกล้ 35% ไฟจะติด-ดับถี่ ๆ ซึ่งเราจะแก้ด้วย **hysteresis** ในหน้า[ปรับแก้โค้ด](04_tuning.qmd) โดยตั้งค่าตอนเปิด gateway ได้เลย
+
+```powershell
+python -m gateway.server --lan --on-below 30 --off-above 40
+```
+
+## สัญญา API (v1) {#sec-api}
+
+ทุกข้อมูลเป็น JSON (UTF-8) ผ่าน HTTP ใน LAN ของห้องเรียน
+
+### บอร์ด → gateway: `POST /v1/decisions`
+
+```{.json filename="gateway/examples/request.json"}
+{"schema_version":1,"device_id":"desk-01","seq":7,"light_raw":310}
+```
+
+| ฟิลด์ | ชนิดและขอบเขต | ความหมาย |
+| --- | --- | --- |
+| `schema_version` | integer = 1 | รุ่นของรูปแบบข้อมูล |
+| `device_id` | string 1–32 ตัว (`A-Z a-z 0-9 _ -`) | รหัสบอร์ด (ห้ามใส่ชื่อจริง) |
+| `seq` | integer 0–2147483647 | เลขคำขอ ใช้จับคู่กับคำตอบ |
+| `light_raw` | integer 0–1023 | ค่าจาก ADC 10 บิต (มาก = สว่าง) |
+
+```{.json filename="gateway/examples/response.json"}
+{"schema_version":1,"device_id":"desk-01","seq":7,"action":"LED_ON","mode":"auto","reason":"แสงน้อย (30% ต่ำกว่า 35%) จึงเปิดไฟ","light_pct":30}
+```
+
+`action` เป็นได้แค่ `LED_ON` หรือ `LED_OFF` ส่วน `mode` คือโหมดปัจจุบัน (`auto`/`on`/`off`) ถ้ารูปแบบข้อมูลผิด gateway ตอบ HTTP 400 พร้อมรายละเอียด (413 ถ้าใหญ่เกิน 2 KB)
+
+### หน้าแชต → gateway
+
+| คำขอ | ใช้ทำอะไร | ตัวอย่าง body |
+| --- | --- | --- |
+| `GET /v1/devices` | อ่านสถานะและประวัติค่าแสงของทุกบอร์ด | — |
+| `POST /v1/control` | เลือกโหมดด้วยปุ่ม | `{"device_id":"desk-01","mode":"on"}` |
+| `POST /v1/chat` | ส่งข้อความ ให้ระบบแปลเป็นคำสั่งและทำงาน | `{"device_id":"desk-01","message":"เปิดไฟ","prompt":"ฉันอ่านหนังสือตอนกลางคืน"}` |
+
+`/v1/chat` รับ `message` (1–300 ตัวอักษร) และ `prompt` (ไม่บังคับ ไม่เกิน 300 ตัวอักษร) ซึ่งคือ system prompt ของผู้ใช้ เมื่อมี `prompt` จะถูกต่อ**ก่อน**ข้อความจริงเป็น `USER NOTES:` / `USER MESSAGE:` ก่อนส่งให้ AI (`compose_messages` ใน `gateway/llm.py`) คำตอบมี
+
+| ฟิลด์ | ความหมาย |
+| --- | --- |
+| `reply` | ข้อความตอบ (สร้างจากแม่แบบและข้อมูลบอร์ด) |
+| `command` | คำสั่งที่ผ่านการตรวจ allowlist แล้ว |
+| `source` | `rule`, `gemma` หรือ `rule_fallback` |
+| `engine` | เมื่อ `source=gemma`: `llama.cpp`, `colab` หรือ `transformers` |
+| `sent` | ข้อความ `[system, user]` ที่ประกอบแล้ว (หน้าแชตแสดงให้นักเรียนดูเพื่อเรียนรู้เรื่อง prompt; ตัวแปลงแบบ `rule` ไม่ได้ส่งให้ AI และไม่อ่าน `prompt`) |
+
+system prompt ของผู้ใช้เป็นแค่ข้อความเสริมใน user message เท่านั้น ไม่เปลี่ยน allowlist: คำสั่งนอก allowlist ที่ AI ตอบมาถูกปฏิเสธแล้วใช้กฎแทน (มีชุดทดสอบ `test_prompt_cannot_add_commands`)
+
+### การค้นหา gateway อัตโนมัติ
+
+บอร์ดที่ไม่ได้ตั้ง `GATEWAY_HOST` ส่ง UDP broadcast `AIOT_DISCOVER 1` ไปที่พอร์ต 8000 gateway (เมื่อรันแบบ `--lan`) ตอบ `AIOT_GATEWAY 1 8000` กลับ บอร์ดใช้ IP ของผู้ตอบเป็น gateway ถ้าเครือข่ายบล็อก broadcast ให้ใส่ IP ใน `GATEWAY_HOST` เอง
+
+## ทดสอบโดยไม่ต้องมีบอร์ด {#sec-simulator}
+
+เปิด gateway ในเทอร์มินัลแรก แล้วรันตัวจำลองในเทอร์มินัลที่สอง
+
+```powershell
+python devices/simulator/simulate_board.py
+```
+
+ต้องเห็น `OK` ครบทุกบรรทัดและ "ผ่านทั้งหมด" ตัวจำลองทดสอบ: มืด→เปิด, สว่าง→ปิด, สั่ง `เปิดไฟ`/`ปิดไฟ`/`อัตโนมัติ` ผ่านแชต และคำถามที่ต้องไม่เปลี่ยนโหมด
+
+ถ้าอยากดูหน้าแชตโดยไม่มีบอร์ด ใช้โหมด demo ที่ส่งค่าแสงขึ้น-ลงเป็นคลื่น
+
+```powershell
+python devices/simulator/simulate_board.py --demo
+```
+
+ชุดทดสอบอัตโนมัติของ gateway (35 รายการ):
+
+```powershell
+python -m unittest discover -s gateway/tests -t .
+```
+
+## อ่านโค้ด
+
+| ไฟล์ | หน้าที่ |
+| --- | --- |
+| `gateway/protocol.py` | ตรวจรูปแบบข้อมูลทุกชนิดที่รับเข้า |
+| `gateway/lamp.py` | กฎเปิด-ปิดไฟ (รวม hysteresis) |
+| `gateway/state.py` | สถานะ โหมด และประวัติของแต่ละบอร์ด |
+| `gateway/commands.py` | คำสั่งที่ระบบรู้จัก (allowlist) และตัวแปลงข้อความด้วยกฎ |
+| `gateway/llm.py` | ส่วนเชื่อมกับ Gemma (เฉพาะแปลข้อความเป็นคำสั่ง) |
+| `gateway/chat.py` | ข้อความตอบกลับของแชต (แม่แบบข้อความ) |
+| `gateway/server.py` | HTTP server และจุดรับคำขอ |
+| `gateway/network.py` | ค้นหา IP ของเครื่องและตอบ UDP discovery |
+
+::: {.callout-tip}
+## ลองดู
+เปิด `gateway/lamp.py` เพิ่มโหมดใหม่ เช่น `dim` ที่ให้ไฟติดเมื่อต่ำกว่า 15% เท่านั้น ต้องแก้ไฟล์ไหนบ้าง และชุดทดสอบช่วยบอกอะไรคุณ
+:::

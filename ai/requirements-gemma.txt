@@ -1,0 +1,5 @@
+# Only for AIOT_GEMMA_RUNTIME=transformers on an NVIDIA GPU (or Colab).
+# CPU-only workshop PCs use llama.cpp instead: ai\scripts\setup_gemma_cpu.ps1 (no Python packages).
+torch
+accelerate
+transformers>=5.10.1

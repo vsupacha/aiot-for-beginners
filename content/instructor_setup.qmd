@@ -1,0 +1,97 @@
+---
+title: "เตรียมระบบ"
+subtitle: "ส่วนของผู้สอน: ติดตั้งและเปิด gateway, หน้าแชต และ Gemma"
+---
+
+::: {.instructor-banner}
+**ส่วนของผู้สอน** นักเรียนไม่ต้องทำหน้านี้ นักเรียนใช้แค่ Arduino และเปิดหน้าแชตในเบราว์เซอร์
+:::
+
+ระบบฝั่งคอมพิวเตอร์ทั้งหมดรันบน**เครื่องผู้สอนเครื่องเดียว** ไม่ใช้ virtual environment ติดตั้งแพ็กเกจตรง ๆ ด้วย `pip`
+
+## ต้องมี
+
+| รายการ | รายละเอียด |
+| --- | --- |
+| คอมพิวเตอร์ | Python 3.10 ขึ้นไป, RAM 8 GB (16 GB ถ้ารัน Gemma บน CPU), ไม่ต้องมี GPU |
+| Wi-Fi | 2.4 GHz วงเดียวกับบอร์ด และ**ไม่เปิด client/AP isolation** (Wi-Fi โรงเรียนหรือ guest มักเปิดไว้ แนะนำ router ที่เตรียมเอง) |
+| ไฟล์ | โคลน repo นี้ แล้วเปิดเทอร์มินัลที่โฟลเดอร์หลัก |
+
+## ติดตั้ง (ครั้งเดียว)
+
+```powershell
+pip install streamlit
+python -m unittest discover -s gateway/tests -t .
+```
+
+ท้ายผลทดสอบต้องเห็น `OK` (gateway ใช้เฉพาะ standard library จึงมีแค่ Streamlit ที่ต้องติดตั้ง ถ้าจะใช้ notebook ให้ `pip install jupyterlab` เพิ่ม)
+
+## เปิดระบบก่อนนักเรียนเข้าห้อง
+
+เทอร์มินัลที่ 1: gateway
+
+```powershell
+python -m gateway.server --lan
+```
+
+เทอร์มินัลที่ 2: หน้าแชต
+
+```powershell
+streamlit run chatbot/app.py
+```
+
+(ไฟล์ `.streamlit/config.toml` ตั้งให้เครื่องอื่นเปิดได้ที่พอร์ต 8501 อยู่แล้ว)
+
+gateway จะพิมพ์ IP ที่ใช้งาน เช่น
+
+```
+>>> Gateway IP: 192.168.1.112   chat page: http://192.168.1.112:8501
+```
+
+**เขียนที่อยู่หน้าแชตและข้อมูลต่อไปนี้ให้นักเรียน:** ชื่อ/รหัส Wi-Fi, `DEVICE_ID` ของแต่ละคน (`desk-01` … ห้ามใช้ชื่อจริง ต้องไม่ซ้ำกัน), URL หน้าแชต บอร์ดค้นหา gateway เอง ไม่ต้องกรอก IP
+
+## เปิด Gemma (ไม่บังคับ)
+
+ค่าเริ่มต้นแปลข้อความด้วยกฎคำสำคัญ ซึ่งเร็วและไม่ต้องติดตั้งเพิ่ม ถ้าต้องการให้ AI แปล (และให้นักเรียนเห็นผลของ system prompt ของตัวเอง) ทำตามนี้ ดูรายละเอียดที่[หน้า AI](instructor_ai.qmd)
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ai\scripts\setup_gemma_cpu.ps1
+```
+
+ขั้นนี้ดาวน์โหลดครั้งเดียว (~3.4 GB) จากนั้นทุกครั้ง: เทอร์มินัลที่ 3 เปิด Gemma แล้วเปิด gateway ใหม่ด้วยตัวแปล `gemma`
+
+```powershell
+powershell -ExecutionPolicy Bypass -File ai\scripts\start_gemma_cpu.ps1
+```
+
+```powershell
+$env:AIOT_TRANSLATOR='gemma'; python -m gateway.server --lan
+```
+
+## firewall ของ Windows (ครั้งเดียว)
+
+ครั้งแรกที่รัน `--lan` Windows จะถามสิทธิ์ ให้เลือก **Private networks** เท่านั้น หรือรันใน PowerShell แบบ Administrator
+
+```powershell
+New-NetFirewallRule -DisplayName "AIoT" -Direction Inbound -Profile Private -Protocol TCP -LocalPort 8000,8501 -Action Allow
+New-NetFirewallRule -DisplayName "AIoT discovery" -Direction Inbound -Profile Private -Protocol UDP -LocalPort 8000 -Action Allow
+```
+
+ตั้ง Wi-Fi ห้องเรียนเป็น *Private network* และ**อย่าเปิดพอร์ตนี้บนเครือข่ายสาธารณะ** ระบบนี้ไม่มีรหัสผ่านหรือ TLS ([ดูเหตุผล](security_preview.qmd))
+
+## ตรวจความพร้อม (2 นาที)
+
+เปิด gateway แล้วรันตัวจำลองบอร์ดในอีกเทอร์มินัล
+
+```powershell
+python devices\simulator\simulate_board.py
+```
+
+ต้องเห็น `ผ่านทั้งหมด` จากนั้นดูว่าบอร์ดจริงอย่างน้อย 1 ชุดขึ้น `HTTP 200` ใน Serial Monitor และเปิดหน้าแชตจากโทรศัพท์ได้
+
+## ข้อควรระวังระหว่างสอน
+
+- ข้อความแชตของนักเรียนอาจถูกส่งไปประมวลผลบน Internet ถ้าใช้ Gemma บน Colab: เตือนไม่ให้พิมพ์ข้อมูลส่วนตัว
+- นักเรียนทุกคนสั่งไฟของทุกบอร์ดได้ (ไม่มีการยืนยันตัวตน) ใช้เป็นตัวอย่างนำเข้าเรื่องความปลอดภัยรอบหน้า
+- ถ้า gateway หรือ Gemma มีปัญหา กด `Ctrl+C` แล้วเปิด gateway ใหม่โดยไม่ตั้ง `AIOT_TRANSLATOR` บอร์ดเชื่อมต่อใหม่เองภายในไม่กี่วินาที และหากติดต่อไม่ได้ หลอดไฟยังทำงานด้วยเกณฑ์ของบอร์ด
+- แก้ปัญหาหน้างาน: [หน้าแก้ปัญหา](troubleshooting.qmd)

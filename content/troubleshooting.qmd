@@ -1,0 +1,46 @@
+---
+title: "แก้ปัญหา"
+subtitle: "ตรวจตามลำดับ: Serial Monitor → Wi-Fi → IP/discovery → firewall → gateway"
+---
+
+เปิด **Serial Monitor ที่ 115200** ก่อนเสมอ แล้วดูข้อความที่บอร์ดพิมพ์
+
+## Cloud Editor และ Arduino Cloud Agent (นักเรียน)
+
+อัปโหลดไม่ได้ / ไม่เห็นบอร์ด / เว็บไม่เจอ Agent: ดูตารางแก้ปัญหาเต็มที่[เตรียมเครื่องมือ: Cloud Editor](arduino_cloud_editor.qmd#sec-troubleshoot) เริ่มจากสามข้อนี้
+
+1. **ต้องกด Allow** ที่หน้าต่างขอเชื่อมต่อของเบราว์เซอร์ ถ้าไม่ได้กด ให้**ปิดเบราว์เซอร์ทั้งหมดแล้วเปิดใหม่**
+2. ไอคอน Arduino Cloud Agent ต้องทำงานอยู่ (ถ้าไม่ ให้เปิดโปรแกรมนี้ หรือถอนแล้วติดตั้งใหม่)
+3. สาย USB ต้องเป็นสายข้อมูล และกด RESET สองครั้งเร็ว ๆ ถ้าอัปโหลดค้าง
+
+## บอร์ดและเครือข่าย (นักเรียน)
+
+| อาการ | สาเหตุที่พบบ่อย | วิธีแก้ |
+| --- | --- | --- |
+| `Wi-Fi unavailable` | ชื่อ/รหัส Wi-Fi ผิด หรือเป็น 5 GHz อย่างเดียว | ตรวจ `arduino_secrets.h`; UNO R4 WiFi ใช้ 2.4 GHz |
+| `Gateway not found` | ยังไม่รัน gateway แบบ `--lan`, firewall บล็อก UDP 8000 หรือ Wi-Fi บล็อก broadcast | แจ้งผู้สอนให้ตรวจ gateway และ firewall; ถ้ายังไม่ได้ ใส่ IP ที่ผู้สอนบอกใน `GATEWAY_HOST` |
+| `Gateway connection failed` (ซ้ำ ๆ) | gateway ปิด, IP เปลี่ยน หรือ firewall บล็อก TCP 8000 | แจ้งผู้สอนว่า gateway ปิดหรือ IP เปลี่ยน บอร์ดค้นหา IP ใหม่เองหลังล้มเหลว 3 ครั้ง |
+| `Still failing; reconnecting Wi-Fi` | ติดต่อไม่ได้ 6 ครั้งติด บอร์ดต่อ Wi-Fi ใหม่เอง | ปกติ รอให้ขึ้น `HTTP 200` ถ้ายังไม่หายกดปุ่ม RESET |
+| `Bad HTTP status: HTTP/1.1 400` | ข้อมูลที่ส่งผิดสัญญา API | ตรวจ `DEVICE_ID` (A–Z, 0–9, `-`, `_` ไม่เกิน 32 ตัว) |
+| `Response contract mismatch` | คำตอบไม่ตรงคำขอ (`seq`/`device_id`/`action`) | ตรวจว่ามีบอร์ดอื่นใช้ `DEVICE_ID` ซ้ำหรือไม่ |
+| `Offline rule: ...` | ติดต่อ gateway ไม่ได้ | ปกติ หลอดไฟทำงานด้วยเกณฑ์ของบอร์ด แก้การเชื่อมต่อตามแถวบน |
+| ไฟกะพริบ | ค่าแสงแกว่งใกล้เกณฑ์ | ดู[ปรับแก้โค้ด](04_tuning.qmd) |
+| ค่า `light` ไม่เต็มช่วง (สูงสุดราว 670) | potentiometer ต่อ 3.3V | ต่อ 5V หรือปรับเทียบเซนเซอร์ |
+| ค่า `light` กลับด้าน (มืด = ค่ามาก) | LDR กับตัวต้านทานต่อสลับกัน | สลับตำแหน่ง หรือสลับ `SENSOR_DARK`/`SENSOR_BRIGHT` |
+
+## gateway, หน้าแชต และ AI (ส่วนของผู้สอน)
+
+::: {.instructor-banner}
+ตารางนี้สำหรับผู้สอน นักเรียนที่พบอาการเหล่านี้ให้แจ้งผู้สอน
+:::
+
+| อาการ | สาเหตุที่พบบ่อย | วิธีแก้ |
+| --- | --- | --- |
+| หน้าแชต: `ติดต่อ gateway ไม่ได้` | gateway ไม่ได้รันบนเครื่องเดียวกับ Streamlit | รัน gateway ก่อน หรือตั้ง `AIOT_GATEWAY_URL` |
+| เปิด `:8501` จากเครื่องอื่นไม่ได้ | ไม่ได้รันจากโฟลเดอร์หลักของ repo (ไม่เจอ `.streamlit/config.toml`), firewall TCP 8501 หรือ client isolation | รัน `streamlit run chatbot/app.py` จากโฟลเดอร์หลัก ตรวจ firewall และ access point |
+| แชตตอบ "ยังไม่พบข้อมูลจากบอร์ด" | บอร์ดยังไม่เคยส่งข้อมูลมาที่ gateway นี้ | ตรวจ Serial Monitor ว่าขึ้น `HTTP 200` |
+| `Gemma: ... NOT reachable` | ยังไม่ได้เปิด `ai\scripts\start_gemma_cpu.ps1` | เปิด Gemma ก่อน แล้วรีสตาร์ต gateway (ระหว่างนี้แชตใช้กฎคำสำคัญ) |
+| ใต้คำตอบแสดง `rule_fallback` ตลอด | Gemma ไม่ตอบ ช้า หรือตอบนอก allowlist | ดู log ของ llama.cpp; เพิ่ม `AIOT_TRANSLATE_SECONDS` |
+| ใต้คำตอบแสดง `gemma · llama.cpp` ทั้งที่เปิด Colab | URL/token ไม่ตรงรอบนี้ หรือ Colab หลุด | รัน `python -m gateway.remote "<ค่าจาก notebook>"` ใหม่ |
+| Colab: `401 unauthorized` | token ไม่ตรง | Run เซลล์ที่พิมพ์คำสั่งเชื่อมต่อใหม่แล้วคัดลอกใหม่ |
+| `UnicodeEncodeError` ในเทอร์มินัล Windows | คอนโซลไม่ใช่ UTF-8 | `$env:PYTHONIOENCODING='utf-8'` ก่อนรัน |

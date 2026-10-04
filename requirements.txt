@@ -1,0 +1,3 @@
+# สำหรับผู้สอน: pip install -r requirements.txt (gateway ใช้ standard library จึงไม่ต้องติดตั้งเพิ่ม)
+streamlit==1.64.0
+# ถ้าจะใช้ notebook ใน ai/notebooks: pip install jupyterlab

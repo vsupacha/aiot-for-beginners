@@ -1,0 +1,34 @@
+---
+title: "แหล่งอ้างอิง"
+---
+
+## ต้นฉบับที่แปลและดัดแปลง
+
+หน้า[แนวคิดเรื่องเซนเซอร์และแอคชูเอเตอร์](01_sensors_actuators.qmd) แปลและเรียบเรียงจากบทเรียนต่อไปนี้ โดยปรับตัวอย่างฮาร์ดแวร์ให้เป็น Arduino UNO R4 WiFi และเชื่อมกับโครงการโคมไฟอัจฉริยะ (ไม่ได้แปลคำต่อคำทั้งหมด และเนื้อหาส่วนโค้ดเป็นงานเขียนใหม่)
+
+> Jen Fox, Jen Looper, Jim Bennett และผู้ร่วมพัฒนา. *IoT For Beginners — Lesson 3: Interact with the physical world with sensors and actuators.* Microsoft. <https://github.com/microsoft/IoT-For-Beginners/blob/main/1-getting-started/lessons/3-sensors-and-actuators/README.md>
+
+- หลักสูตรต้นฉบับ: <https://github.com/microsoft/IoT-For-Beginners>
+- สัญญาอนุญาตของต้นฉบับ: MIT License (Copyright (c) Microsoft Corporation)
+- ภาพ sketchnote ของต้นฉบับโดย Nitya Narasimhan **ไม่ได้ถูกคัดลอกมาใน repo นี้** ผู้สนใจดูที่หน้าต้นฉบับ
+- งานนี้เป็นการแปลและดัดแปลงโดย ผศ.ดร.ศุภชัย วรพจน์พิศุทธิ์ ไม่ได้ผ่านการรับรองหรือสนับสนุนโดย Microsoft
+
+## เอกสารและเครื่องมือที่ใช้
+
+| หัวข้อ | ลิงก์ |
+| --- | --- |
+| Arduino Cloud Agent ไม่ถูกตรวจพบ | <https://support.arduino.cc/hc/en-us/articles/360016466600-If-the-Arduino-Cloud-Agent-isn-t-detected> |
+| บอร์ดไม่ถูกตรวจพบโดย Cloud Editor | <https://support.arduino.cc/hc/en-us/articles/360018131160-If-your-board-is-not-detected-by-Arduino-Cloud-Editor> |
+| Arduino UNO R4 WiFi | <https://docs.arduino.cc/hardware/uno-r4-wifi/> |
+| `analogWrite()` และ PWM | <https://docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/> |
+| `analogReadResolution()` | <https://docs.arduino.cc/language-reference/en/functions/analog-io/analogReadResolution/> |
+| ไลบรารี WiFiS3 | <https://docs.arduino.cc/language-reference/en/functions/wifi/wifi/> |
+| ArduinoJson | <https://arduinojson.org> |
+| Streamlit | <https://streamlit.io> |
+| Gemma (Google) | <https://huggingface.co/google/gemma-4-E2B-it> |
+| llama.cpp | <https://github.com/ggml-org/llama.cpp> |
+| Quarto | <https://quarto.org> |
+
+## สัญญาอนุญาตของ repo นี้
+
+MIT License ดูไฟล์ `LICENSE` ใน repo

@@ -1,0 +1,8 @@
+﻿# ให้ `streamlit run chatbot/app.py` ที่รันจากโฟลเดอร์หลักของ repo ใช้ได้เลย โดยไม่ต้องพิมพ์ option
+[server]
+address = "0.0.0.0"   # ให้เครื่องอื่นในห้องเรียนเปิดได้ (ใช้ในเครือข่ายที่ควบคุมได้เท่านั้น)
+port = 8501
+headless = true
+
+[browser]
+gatherUsageStats = false

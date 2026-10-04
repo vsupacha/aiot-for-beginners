@@ -1,0 +1,16 @@
+/* ปรับขนาดให้อ่านภาษาไทยสบายขึ้น */
+body { line-height: 1.75; }
+code, pre { font-size: 0.9em; }
+.callout-title-container { font-weight: 600; }
+.sourceCode { border-radius: 6px; }
+.badge-cite { font-size: 0.85em; opacity: 0.85; }
+
+/* ป้ายระบุว่าเป็นเนื้อหาของผู้สอน */
+.instructor-banner {
+  border-left: 6px solid #b9770e;
+  background: rgba(241, 196, 15, 0.14);
+  padding: 0.6rem 1rem;
+  margin: 1rem 0 1.5rem;
+  border-radius: 4px;
+}
+.instructor-banner p { margin: 0; }

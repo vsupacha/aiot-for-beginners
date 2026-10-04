@@ -1,0 +1,80 @@
+project:
+  type: website
+  render:
+    - index.qmd
+    - content/*.qmd
+
+website:
+  title: "AIoT for Beginners"
+  navbar:
+    logo: content/figs/TSE_logo.svg
+    left:
+      - href: index.qmd
+        text: หน้าแรก
+      - text: นักเรียน
+        menu:
+          - href: content/arduino_cloud_editor.qmd
+            text: เตรียมเครื่องมือ (Cloud Editor)
+          - href: content/01_sensors_actuators.qmd
+            text: แนวคิดเซนเซอร์และแอคชูเอเตอร์
+          - href: content/02_build_lamp.qmd
+            text: สร้างโคมไฟด้วย Arduino
+          - href: content/03_chat_ui.qmd
+            text: ใช้หน้าแชต
+          - href: content/04_tuning.qmd
+            text: ปรับแก้โค้ด
+      - text: ผู้สอน
+        menu:
+          - href: content/instructor_setup.qmd
+            text: เตรียมระบบ
+          - href: content/instructor_gateway.qmd
+            text: Gateway
+          - href: content/instructor_ai.qmd
+            text: AI (Gemma)
+    right:
+      - icon: github
+        href: https://github.com/vsupacha/aiot-for-beginners
+  sidebar:
+    style: docked
+    search: true
+    contents:
+      - index.qmd
+      - section: "สำหรับนักเรียน"
+        contents:
+          - content/arduino_cloud_editor.qmd
+          - content/01_sensors_actuators.qmd
+          - content/02_build_lamp.qmd
+          - content/03_chat_ui.qmd
+          - content/04_tuning.qmd
+          - content/troubleshooting.qmd
+      - section: "สำหรับผู้สอน"
+        contents:
+          - content/instructor_setup.qmd
+          - content/instructor_gateway.qmd
+          - content/instructor_ai.qmd
+          - content/security_preview.qmd
+      - content/references.qmd
+  page-footer:
+    center: "AIoT for Beginners · ภาควิชาวิศวกรรมไฟฟ้าและคอมพิวเตอร์ มหาวิทยาลัยธรรมศาสตร์ · เนื้อหาบางส่วนแปลและดัดแปลงจาก Microsoft IoT-For-Beginners (MIT License)"
+
+format:
+  html:
+    theme: cosmo
+    lang: th
+    toc: true
+    toc-title: "ในหน้านี้"
+    code-copy: true
+    code-line-numbers: false
+    number-sections: false
+    smooth-scroll: true
+    mainfont: "Noto Sans Thai"
+    monofont: "JetBrains Mono"
+    include-in-header:
+      text: |
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    css: content/style.css
+
+author: "ผศ.ดร.ศุภชัย วรพจน์พิศุทธิ์"
+date: 2026-10-04
+date-format: long

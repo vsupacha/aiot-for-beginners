@@ -1,0 +1,14 @@
+# รหัส Wi-Fi จริงห้ามขึ้น repo
+**/arduino_secrets.h
+**/__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+# ผลลัพธ์ของ Quarto
+_site/
+.quarto/
+/.jupyter_cache/
+*_files/
+
+/.quarto/
+**/*.quarto_ipynb
