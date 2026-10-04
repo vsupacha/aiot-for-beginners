@@ -67,7 +67,7 @@ python -m gateway.server --lan
 ใช้ [`ai/notebooks/colab_llm_server.ipynb`](https://github.com/vsupacha/aiot-for-beginners/blob/main/ai/notebooks/colab_llm_server.ipynb) รัน Ollama + Gemma บน Colab และเปิดทางให้ gateway เรียกผ่าน ngrok ถ้า Colab ช้าหรือหลุด gateway สลับไปใช้ llama.cpp ในเครื่อง และสุดท้ายใช้กฎ
 
 1. สมัคร ngrok (ฟรี) นำ authtoken ไปใส่ใน Colab → 🔑 Secrets ชื่อ `NGROK_AUTHTOKEN` (อย่าเขียน token ลงในเซลล์)
-2. เปิด notebook ใน Colab เลือก **T4 GPU** แล้ว **Run all** ปล่อยเซลล์สุดท้ายให้รันค้างไว้
+2. เปิด notebook ใน Colab เลือก **T4 GPU** แล้ว **Run all** ปล่อยเซลล์สุดท้ายให้รันค้างไว้ เซลล์ 2 ใช้เวลาหลายนาทีในครั้งแรก (ดาวน์โหลดโมเดล ~7 GB แล้วโหลดเข้า GPU) และพิมพ์ตาราง `ollama ps` ที่คอลัมน์ PROCESSOR ต้องเป็น **100% GPU**
 3. คัดลอกคำสั่ง `python -m gateway.remote "https://…#<token>"` ที่ notebook พิมพ์ ไปรันบนเครื่องของคุณ
 4. เปิด gateway
 
