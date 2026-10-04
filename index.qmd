@@ -44,6 +44,7 @@ flowchart LR
 | 0 | ติดตั้ง Arduino Cloud Agent และใช้ Cloud Editor อัปโหลดโค้ด (พร้อมวิธีแก้ปัญหา) | [เตรียมเครื่องมือ](content/arduino_cloud_editor.qmd) |
 | 1 | เซนเซอร์และแอคชูเอเตอร์: แนวคิดพื้นฐาน | [แนวคิด](content/01_sensors_actuators.qmd) |
 | 2 | ต่อวงจร อ่านค่าแสง ทำไฟกลางคืน แล้วเชื่อม Wi-Fi | [สร้างโคมไฟ](content/02_build_lamp.qmd) |
+| 2b | **ไม่มีบอร์ด?** จำลองขั้นที่ 1–4 ในเบราว์เซอร์ด้วย Wokwi | [ไม่มีบอร์ด? ใช้ Wokwi](content/wokwi.qmd) |
 | 3 | สั่งและตรวจสอบโคมไฟผ่านหน้าแชต + ลองเขียน system prompt ของตัวเอง | [ใช้หน้าแชต](content/03_chat_ui.qmd) |
 | 4 | ปรับแก้โค้ด Arduino ให้ใช้งานได้ดีขึ้น | [ปรับแก้โค้ด](content/04_tuning.qmd) |
 

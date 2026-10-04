@@ -19,6 +19,8 @@ website:
             text: แนวคิดเซนเซอร์และแอคชูเอเตอร์
           - href: content/02_build_lamp.qmd
             text: สร้างโคมไฟด้วย Arduino
+          - href: content/wokwi.qmd
+            text: ไม่มีบอร์ด? ใช้ Wokwi
           - href: content/03_chat_ui.qmd
             text: ใช้หน้าแชต
           - href: content/04_tuning.qmd
@@ -44,6 +46,7 @@ website:
           - content/arduino_cloud_editor.qmd
           - content/01_sensors_actuators.qmd
           - content/02_build_lamp.qmd
+          - content/wokwi.qmd
           - content/03_chat_ui.qmd
           - content/04_tuning.qmd
           - content/troubleshooting.qmd

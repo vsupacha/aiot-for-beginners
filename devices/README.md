@@ -8,6 +8,7 @@
 | `02_local_nightlight/` | ไฟกลางคืนที่ทำงานบนบอร์ดอย่างเดียว | — |
 | `03_smart_lamp/` | ส่งค่าแสงให้ gateway และทำตามคำสั่ง (auto/on/off จากหน้าแชต) | Wi-Fi, ArduinoJson v7 |
 | `04_smart_lamp_tuned/` | ฉบับปรับแก้: 14 บิต, moving average, calibration, hysteresis offline, PWM fade, `millis()` | LED + 220 Ω ที่ D5 |
+| `wokwi/` | **ไม่มีบอร์ด**: สเก็ตช์ + `diagram.json` สำหรับ Arduino Uno ใน [Wokwi](https://wokwi.com) (ขั้น 3 จำลอง gateway ด้วย Serial) | เบราว์เซอร์ |
 | `simulator/` | จำลองบอร์ดเพื่อทดสอบ gateway/แชตโดยไม่ต้องมีฮาร์ดแวร์ | Python |
 | `uno_q/` | แนวทางย้ายไป Arduino UNO Q (ยังไม่ได้ทดสอบ) | — |
 

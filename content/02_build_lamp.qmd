@@ -5,6 +5,11 @@ subtitle: "ต่อวงจร อ่านค่าแสง ทำไฟก�
 
 โค้ดทั้งหมดของหน้านี้อยู่ในโฟลเดอร์ `devices/` เปิดด้วย Arduino Cloud Editor หรือ Arduino IDE 2 แล้วเลือกบอร์ด **Arduino UNO R4 WiFi** ถ้าใช้ Cloud Editor ครั้งแรก ให้ทำตาม[เตรียมเครื่องมือ](arduino_cloud_editor.qmd)ก่อน (ต้องติดตั้ง Arduino Cloud Agent และกด Allow การเชื่อมต่อของเบราว์เซอร์)
 
+::: {.callout-tip}
+## ไม่มีบอร์ด?
+ใช้ Wokwi จำลอง Arduino Uno ในเบราว์เซอร์ได้ ดู[ไม่มีบอร์ด? ใช้ Wokwi](wokwi.qmd) (ขั้นที่ 3 จำลอง gateway ด้วย Serial)
+:::
+
 ## ต่อวงจร
 
 ![วงจรเซนเซอร์แสงและ LED ภายนอก](figs/wiring.svg){#fig-wiring fig-alt="แผนผังต่อ LDR กับตัวต้านทาน 10 กิโลโอห์มเข้าขา A0 และต่อ LED พร้อมตัวต้านทาน 220 โอห์มเข้าขา D5"}
